@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec swipl -q -f "$base/load" --
+swipl -s proj.pl -t halt
