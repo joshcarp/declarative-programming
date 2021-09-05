@@ -1,27 +1,30 @@
 :- ensure_loaded(library(clpfd)).
 :- use_module(library(lists)).
 
-puzzle_solution(Puzzle, WordList) :-
+puzzle_solution(Rows, WordList) :-
     write(Puzzle),
     transpose(Puzzle, Columns),
-    all_slots(Puzzle, RowSlots),
-    all_slots(Columns, ColumnSlots),
-    fill(RowSlots, WordList).
+    slots('#', Rows, RowSlots),
+    slots('#', Columns, ColumnSlots).
 
-all_slots([], []).
+slots(_, [], []).
 
-all_slots([R|Rs], RowSlots):-
-    slots(R, '#', RowSlots),
-    append(RowSlots, Tmp, RowSlots),
-    all_slots(Rs, Tmp).
+slots(Elem, [R|Rs], Sliced):-
+    slice(Elem, R, [], Tmp1),
+    slots(Elem, Rs, Tmp2),
+    append(Tmp1, Tmp2, Sliced).
 
-slots([], _, [_,_]).
+slice(_, [], [], []).
 
-slots_helper(Lin, Elem, [Front, Back]) :-
-    slots(Lin, Elem, [Front, Back]).
+slice(_, [], Cum, [Cum]).
 
-slots(Lin, Elem, [Front, Back]) :-
-   append([Back,[Elem],Front],Lin), write([Front, Back])
+slice(Elem, [Elem|Xs], Cum, [Cum|Sliced]) :-
+    slice(Elem, Xs, [], Sliced).
+
+slice(Elem, [X|Xs], Cum, Sliced) :-
+    X \= Elem,
+    append(Cum, [X], Cum1),
+    slice(Elem, Xs, Cum1, Sliced).
 
 
 :- Puzzle = [['#',h,'#'],[_,_,_],['#',_,'#']], WordList = [[h,a,t], [b,a,g]], puzzle_solution(Puzzle, WordList),  write(Puzzle), nl.
