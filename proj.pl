@@ -4,14 +4,14 @@
 puzzle_solution(Rows, WordList) :-
     write(Puzzle),
     transpose(Puzzle, Columns),
-    slots('#', Rows, RowSlots),
-    slots('#', Columns, ColumnSlots).
+    slice_all('#', Rows, RowSlots),
+    slice_all('#', Columns, ColumnSlots).
 
-slots(_, [], []).
+slice_all(_, [], []).
 
-slots(Elem, [R|Rs], Sliced):-
-    slice(Elem, R, [], Tmp1),
-    slots(Elem, Rs, Tmp2),
+slice_all(Elem, [X|Xs], Sliced):-
+    slice(Elem, X, [], Tmp1),
+    slice_all(Elem, Xs, Tmp2),
     append(Tmp1, Tmp2, Sliced).
 
 slice(_, [], [], []).
