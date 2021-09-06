@@ -110,23 +110,38 @@ slice(Sep, [X|Xs], Cum, Sliced) :-
     unify_slots(-Slots: List, +Words: List):
     unify_slots/2 unifies Slots in List1 with words in List2.
     Holds true List1 is unified with List2.
+
+    Examples:
+
+    ?- unify_slots([[B, A, G]], [[b,a,g]]).
+    B = b,
+    A = a,
+    G = g .
 */
 unify_slots([], []).
-unify_slots(Slots, Words) :- write(Slots), write(Words), nl,
+unify_slots(Slots, Words) :-
     unify_slot(Slots, Words, Best, Word),
-    exclude(==(Word), Words, RestOfWords),
-    exclude(==(Best), Slots, RestOfSlots),
-    unify_slots(RestOfSlots, RestOfWords).
+    exclude(==(Word), Words, WordsLeft),
+    exclude(==(Best), Slots, SlotsLeft),
+    unify_slots(SlotsLeft,   WordsLeft).
 
 
 /*
     unify_slot(-Slots: List, +Words: List, -Slot: List, -Word: List):
     unify_slot/4 Slot is a unification with Word.
     Holds true if Slot and Word are unified from Slots and Words.
+
+    Example:
+
+    ?- unify_slot([[B, A, G], [X, Y, Z]], [[b,a,g]], Best, Word).
+    B = b,
+    A = a,
+    G = g,
+    Best = Word, Word = [b, a, g] .
 */
 unify_slot([S|Ss], Words, Best, Word) :-
     slot_perms(S, Words, 0, PermCount),
-    best_slot(Words, PermCount, Ss, S, Best),
+    best_slot(Ss, S, Words, PermCount, Best),
     exclude(\=(Best), Words, Perm),
     member(Word, Perm),
     Best = Word.
@@ -136,6 +151,11 @@ unify_slot([S|Ss], Words, Best, Word) :-
     slot_perms(-Slot: List, +Words: List, +Cummulative: Number, -PermutationCount: Number).
     slot_perms/4 counts the amount words that can fit in Slot into PermutationCount.
     Holds true if Permutation count is the amount of Words that can fit in Slot.
+
+    Examples:
+
+    ?- slot_perms([A,B,C], [[h,a,t],[b,a,g]], 0, PermCount).
+    PermCount = 0+1+1 .
 */
 slot_perms(_, [], Cum, Cum).
 slot_perms(Slot, [W| Ws], Cum, PermCount) :-
@@ -148,13 +168,18 @@ slot_perms(Slot, [W| Ws], Cum, PermCount) :-
     best_slot(+Words: List, +Permutations: Number, +Slots: List, +CurrentBest: Number, -Best: List).
     best_slot/5 selects the best Slot into Best from Slots given a list of Words.
     Holds true if Best is the Best selection of Words from Slots.
+
+    Examples:
+
+    ?- best_slot([[A,B,C]], [A, B, C], [[h,a,t],[b,a,g]], 0, Best).
+    Best = [A, B, C].
 */
-best_slot(_, _, [], Best, Best).
-best_slot(Words, PermCount, [S|Ss], CurrentBest, Best):-
+best_slot([], Best, _, _, Best).
+best_slot([S|Ss], CurrentBest, Words, PermCount, Best):-
    slot_perms(S, Words, 0, NewPermCount),
    (NewPermCount < PermCount->
-       best_slot(Words, NewPermCount, Ss, S, Best);
-       best_slot(Words, PermCount, Ss, CurrentBest, Best)
+       best_slot(Ss, S, Words, NewPermCount, Best);
+       best_slot(Ss, CurrentBest, Words, PermCount, Best)
    ).
 
 
