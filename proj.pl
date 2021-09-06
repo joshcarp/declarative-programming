@@ -9,7 +9,7 @@
 *
 * A Fillin Puzzle is similar to a crossword puzzle except that words are supplied instead of hints.
 * The goal of a fill in puzzle is to match words with slots, and overlap common letters if they occur.
-* This implementation takes a generic approach to 'Slot' creation and unification and most code could be refactored to be used in other applications.
+* This implementation takes a generic approach to 'Slot' creation and unification and most code could be reused in other applications.
 * puzzle_solution is the main predicate (see below) and some rules:
 * - The blocked out elements are indicated with '#' chars (usually illustrated by black squares)
 * - The minumum slot length is 2
