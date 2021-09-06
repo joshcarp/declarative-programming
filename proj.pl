@@ -23,9 +23,11 @@ lengthgt(Threshold, List) :-
     length(List, ListLength),
     Threshold < ListLength.
 
-slice(_, [], [], []).
-
-slice(_, [], Cum, [Cum]).
+slice(_, [], Cum, Res) :-
+    (Cum == [] ->
+        Res = [];
+        Res = [Cum]
+    ).
 
 slice(Elem, [X|Xs], Cum, [Cum|Sliced]) :-
     nonvar(X), Elem == X,
