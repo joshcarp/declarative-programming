@@ -1,20 +1,39 @@
-/*
-Author:   Joshua Carpeggiani <jcarpeggiani@student.unimelb.edu.au>
-Purpose:  Code for Project 1, Semester 2, 2021: Fill in puzzle.
+
+/*  Code for Project 1, Semester 2, 2021
+    Author:         Joshua Carpeggiani
+    E-mail:         jcarpeggiani@student.unimelb.edu.au
+    Student ID:     999380
+    Purpose:        Code for Project 1, Semester 2, 2021. Fillin Puzzle (https://en.wikipedia.org/wiki/Fill-In_(puzzle)).
+                    This code allows for a Puzzle specification and a WordList to be input, and the Puzzle will be unified with a solution for that Puzzle.
 */
 :- ensure_loaded(library(clpfd)).
 :- ensure_loaded(library(lists)).
 
+/*
+    puzzle_solution/2 solves a Fill-in Puzzle. Holds true if Puzzle is a valid puzzle for WordList.
+*/
 puzzle_solution(Puzzle, WordList) :-
     write(Puzzle),
-    slots(Puzzle, Slots, '#').
+    slots('#', Puzzle, Slots).
+/*
+Slot functions
+*/
 
-slots(Rows, Slots, Sep) :-
+/*
+    slots/3 seperates Rows into slots based on Sep, a separator.
+    Holds true if Slots is a representation of Rows where each row is cut at Sep.
+*/
+slots(Sep, Rows, Slots) :-
     transpose(Rows, Columns),
     slice_all(Sep, Rows, RowSlots),
     slice_all(Sep, Columns, ColumnSlots),
     append(RowSlots, ColumnSlots, Slots).
 
+/*
+    slice_all(Elem, List1, List2):
+    slice_all/3 Slices a List of Lists on the Sep separator.
+    Holds true if List2 contains List1 with all sub lists cut on separator Elem.
+*/
 slice_all(_, [], []).
 
 slice_all(Sep, [X|Xs], Sliced):-
@@ -23,10 +42,20 @@ slice_all(Sep, [X|Xs], Sliced):-
     slice_all(Sep, Xs, Tmp3),
     append(Tmp2, Tmp3, Sliced).
 
+/*
+    lengthcheck(Int, Goal, List):
+    lengthcheck/3 is a generic function to check lengths of lists based on an operator.
+    Holds true if Goal called on Int, and the Length of List holds.
+*/
 lengthcheck(Threshold, Op, List) :-
     length(List, ListLength),
     call(Op, Threshold, ListLength).
 
+/*
+    slice(Elem, List1, List2, List3):
+    slice/4 slices a list on a separator.
+    Holds true if List3 is the same as List1, cut on Elem appended with List2.
+*/
 slice(_, [], Cum, Res) :-
     (Cum == [] ->
         Res = [];
