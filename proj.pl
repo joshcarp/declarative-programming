@@ -15,13 +15,13 @@ slice_all(_, [], []).
 
 slice_all(Elem, [X|Xs], Sliced):-
     slice(Elem, X, [], Tmp1),
-    include(lengthgt(1), Tmp1, Tmp2),
+    include(lengthcheck(1, <), Tmp1, Tmp2),
     slice_all(Elem, Xs, Tmp3),
     append(Tmp2, Tmp3, Sliced).
 
-lengthgt(Threshold, List) :-
+lengthcheck(Threshold, Op, List) :-
     length(List, ListLength),
-    Threshold < ListLength.
+    call(Op, Threshold, ListLength).
 
 slice(_, [], Cum, Res) :-
     (Cum == [] ->
