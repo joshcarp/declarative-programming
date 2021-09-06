@@ -16,7 +16,7 @@
 */
 puzzle_solution(Puzzle, WordList) :-
     slots('#', Puzzle, Slots).
-    solve(Slots, Words).
+    solve(Slots, WordList).
 
 
 /*
@@ -28,6 +28,14 @@ slots(Sep, Rows, Slots) :-
     slice_all(Sep, Rows, RowSlots),
     slice_all(Sep, Columns, ColumnSlots),
     append(RowSlots, ColumnSlots, Slots).
+
+/*
+    solve/2 solves a Puzzle by matching slots to the WordList.
+    Holds true if Slots is completed with words of WordList.
+    TODO: Implement this function.
+*/
+solve(Slots, WordList) :-
+    write(Slots), write(WordList).
 
 
 /* ----------------------------- Generic Slice Functions --------------------------------- */
