@@ -11,8 +11,9 @@ slice_all(_, [], []).
 
 slice_all(Elem, [X|Xs], Sliced):-
     slice(Elem, X, [], Tmp1),
-    slice_all(Elem, Xs, Tmp2),
-    append(Tmp1, Tmp2, Sliced).
+    exclude(==([]),Tmp1, Tmp2),
+    slice_all(Elem, Xs, Tmp3),
+    append(Tmp2, Tmp3, Sliced).
 
 slice(_, [], [], []).
 
