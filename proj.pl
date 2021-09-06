@@ -15,11 +15,9 @@
     Holds true if List1 is a valid puzzle (List of Lists) for WordList as defined here: https://en.wikipedia.org/wiki/Fill-In_(puzzle).
 */
 puzzle_solution(Puzzle, WordList) :-
-    write(Puzzle),
     slots('#', Puzzle, Slots).
-/*
-Slot functions
-*/
+    solve(Slots, Words).
+
 
 /*
     slots/3 seperates Rows into slots based on Sep, a separator.
@@ -30,6 +28,9 @@ slots(Sep, Rows, Slots) :-
     slice_all(Sep, Rows, RowSlots),
     slice_all(Sep, Columns, ColumnSlots),
     append(RowSlots, ColumnSlots, Slots).
+
+
+/* ----------------------------- Generic Slice Functions --------------------------------- */
 
 /*
     slice_all(Elem, List1, List2):
@@ -72,6 +73,8 @@ slice(Sep, [X|Xs], Cum, Sliced) :-
     X \== Sep,
     append(Cum, [X], Cum1),
     slice(Sep, Xs, Cum1, Sliced).
+
+
 
 :- Puzzle = [[_,_,_,_,_,#,_,_,_,_,#,_,_,_,_],[_,_,_,_,_,#,_,_,_,_,#,_,_,_,_],[_,_,_,_,_,#,_,_,_,_,#,_,_,_,_],[_,_,_,_,#,_,_,_,#,_,_,_,_,_,_],[#,#,#,_,_,_,_,#,_,_,_,#,_,_,_],[_,_,_,_,_,_,#,_,_,_,_,#,#,#,#],[_,_,_,_,_,#,_,_,_,_,_,#,_,_,_],[_,_,_,_,#,_,_,_,_,_,#,_,_,_,_],[_,_,_,#,_,_,_,_,_,#,_,_,_,_,_],[#,#,#,#,_,_,_,_,#,_,_,_,_,_,_],[_,_,_,#,_,_,_,#,_,_,_,_,#,#,#],[_,_,_,_,_,_,#,_,_,_,#,_,_,_,_],[_,_,_,_,#,_,_,_,_,#,_,_,_,_,_],[_,_,_,_,#,_,_,_,_,#,_,_,_,_,_],[_,_,_,_,#,_,_,_,_,#,_,_,_,_,_]], slots(Puzzle, Slots, '#').
 :- Puzzle = [['#',h],[_,_]],slots(Puzzle, Slots, '#').
