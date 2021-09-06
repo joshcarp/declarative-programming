@@ -10,35 +10,26 @@
 :- ensure_loaded(library(lists)).
 
 /*
-    puzzle_solution(List1, List2):
+    puzzle_solution(-Puzzle: List, +WordList: List):
     puzzle_solution/2 solves a Fill-in Puzzle.
     Holds true if List1 is a valid puzzle (List of Lists) for WordList as defined here: https://en.wikipedia.org/wiki/Fill-In_(puzzle).
 */
 puzzle_solution(Puzzle, WordList) :-
-    slots('#', Puzzle, Slots),
+    slots('#', 1, Puzzle, Slots),
     unify_slots(Slots, WordList).
 
 
 /*
+    slots(Sep: Elem, Rows: List, Slots: List):
     slots/3 seperates Rows into slots based on Sep, a separator.
     Holds true if Slots is a representation of Rows where each row is cut at Sep.
 */
-slots(Sep, Rows, Slots) :-
+slots(Sep, Min, Rows, Slots) :-
     transpose(Rows, Columns),
-    slice_all(Sep, Rows, RowSlots),
-    slice_all(Sep, Columns, ColumnSlots),
+    slice_all(Sep, Min, Rows, RowSlots),
+    slice_all(Sep, Min, Columns, ColumnSlots),
     append(RowSlots, ColumnSlots, Slots).
 
-/*
-    solve/2 solves a Puzzle by matching slots to the WordList.
-    Holds true if Slots is completed with words of WordList.
-    TODO: Implement this function.
-*/
-/*solve(Slots, WordList) :-
-
-    write('Slots'), write(Slots), write(' '),  write('WordList'), write(WordList), nl, write('hello world'), nl.
-
-solve_slot(Slot, WordList) :-*/
 
 /* ----------------------------- Generic Slice Functions --------------------------------- */
 
@@ -47,12 +38,12 @@ solve_slot(Slot, WordList) :-*/
     slice_all/3 Slices a List of Lists on the Sep separator.
     Holds true if List2 contains List1 with all sub lists cut on separator Elem.
 */
-slice_all(_, [], []).
+slice_all(_, _, [], []).
 
-slice_all(Sep, [X|Xs], Sliced) :-
+slice_all(Sep, Min, [X|Xs], Sliced) :-
     slice(Sep, X, [], Tmp1),
-    include(lengthcheck(1, <), Tmp1, Tmp2),
-    slice_all(Sep, Xs, Tmp3),
+    include(lengthcheck(Min, <), Tmp1, Tmp2),
+    slice_all(Sep,Min, Xs, Tmp3),
     append(Tmp2, Tmp3, Sliced).
 
 /*
@@ -85,20 +76,37 @@ slice(Sep, [X|Xs], Cum, Sliced) :-
     slice(Sep, Xs, Cum1, Sliced).
 
 
+/*
+    unify_slots(Slots: List, Words: List):
+    unify_slots/2 unifies Slots in List1 with words in List2.
+    Holds true List1 is unified with List2.
+*/
 unify_slots([],[]).
-unify_slots(Slots, WordList) :-
-    unify_slot(Slots, WordList, Best, Word),
-    exclude(==(Word), WordList, RestOfWords),
+unify_slots(Slots, Words) :-
+    unify_slot(Slots, Words, Best, Word),
+    exclude(==(Word), Words, RestOfWords),
     exclude(==(Best), Slots, RestOfSlots),
     unify_slots(RestOfSlots, RestOfWords).
 
-unify_slot([S|Ss], WordList, Best, Word) :-
-    slot_perms(S, WordList, 0, PermCount),
-    best_slot(WordList, PermCount, Ss, S, Best),
-    exclude(\=(Best), WordList, Perm),
+
+/*
+    unify_slot(Slots: List, Words: List, Slot: List, Word: List):
+    unify_slot/4 Slot is a unification with Word.
+    Holds true if Slot and Word are unified from Slots and Words.
+*/
+unify_slot([S|Ss], Words, Best, Word) :-
+    slot_perms(S, Words, 0, PermCount),
+    best_slot(Words, PermCount, Ss, S, Best),
+    exclude(\=(Best), Words, Perm),
     member(Word, Perm),
     Best = Word.
 
+
+/*
+    slot_perms(Slot: List, Words: List, Cummulative: Number, PermutationCount: Number).
+    slot_perms/4 counts the amount words that can fit in Slot into PermutationCount.
+    Holds true if Permutation count is the amount of Words that can fit in Slot.
+*/
 slot_perms(_, [], Cum, Cum).
 slot_perms(Slot, [W| Ws], Cum, PermCount) :-
     (Slot \= W ->
@@ -106,12 +114,17 @@ slot_perms(Slot, [W| Ws], Cum, PermCount) :-
         slot_perms(Slot, Ws, Cum+1, PermCount)
     ).
 
+/*
+    best_slot(Words: List, Permutations: Number, Slots: List, CurrentBest: Number, Best: List).
+    best_slot/5 selects the best Slot into Best from Slots given a list of Words.
+    Holds true if Best is the Best selection of Words from Slots.
+*/
 best_slot(_, _, [], Best, Best).
-best_slot(WordList, PermCount, [S|Ss], CurrentBest, Best):-
-   slot_perms(S, WordList, 0, NewPermCount),
+best_slot(Words, PermCount, [S|Ss], CurrentBest, Best):-
+   slot_perms(S, Words, 0, NewPermCount),
    (NewPermCount < PermCount->
-       best_slot(WordList, NewPermCount, Ss, S, Best);
-       best_slot(WordList, PermCount, Ss, CurrentBest, Best)
+       best_slot(Words, NewPermCount, Ss, S, Best);
+       best_slot(Words, PermCount, Ss, CurrentBest, Best)
    ).
 
 
