@@ -38,7 +38,7 @@ slots(Sep, Rows, Slots) :-
 */
 slice_all(_, [], []).
 
-slice_all(Sep, [X|Xs], Sliced):-
+slice_all(Sep, [X|Xs], Sliced) :-
     slice(Sep, X, [], Tmp1),
     include(lengthcheck(1, <), Tmp1, Tmp2),
     slice_all(Sep, Xs, Tmp3),
