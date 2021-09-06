@@ -10,7 +10,9 @@
 :- ensure_loaded(library(lists)).
 
 /*
-    puzzle_solution/2 solves a Fill-in Puzzle. Holds true if Puzzle is a valid puzzle for WordList.
+    puzzle_solution(List1, List2):
+    puzzle_solution/2 solves a Fill-in Puzzle.
+    Holds true if List1 is a valid puzzle (List of Lists) for WordList as defined here: https://en.wikipedia.org/wiki/Fill-In_(puzzle).
 */
 puzzle_solution(Puzzle, WordList) :-
     write(Puzzle),
