@@ -1,5 +1,9 @@
+/*
+Author:   Joshua Carpeggiani <jcarpeggiani@student.unimelb.edu.au>
+Purpose:  Code for Project 1, Semester 2, 2021: Fill in puzzle.
+*/
 :- ensure_loaded(library(clpfd)).
-:- use_module(library(lists)).
+:- ensure_loaded(library(lists)).
 
 puzzle_solution(Puzzle, WordList) :-
     write(Puzzle),
