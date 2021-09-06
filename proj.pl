@@ -45,6 +45,7 @@ puzzle_solution(Puzzle, WordList) :-
 */
 slots(Sep, Min, Rows, Slots) :-
     transpose(Rows, Columns),
+    % All slots is going to include both Rows and Columns.
     slice_all(Sep, Min, Rows,    RowSlots),
     slice_all(Sep, Min, Columns, ColumnSlots),
     append(RowSlots, ColumnSlots, Slots).
@@ -65,6 +66,7 @@ slots(Sep, Min, Rows, Slots) :-
 slice_all(_, _, [], []).
 slice_all(Sep, Min, [X|Xs], Sliced) :-
     slice(Sep, X, [], Tmp1),
+    % Only include elements that pass the lengthcheck.
     include(lengthcheck(Min, =<), Tmp1, Tmp2),
     slice_all(Sep,Min, Xs, Tmp3),
     append(Tmp2, Tmp3, Sliced).
@@ -102,9 +104,11 @@ slice(_, [], Cum, Res) :-
         Res = [Cum]
     ).
 slice(Sep, [X|Xs], Cum, [Cum|Sliced]) :-
+    % X shouldn't be a variable (our puzzle has string literals '#').
     nonvar(X), Sep == X,
     slice(Sep, Xs, [], Sliced).
 slice(Sep, [X|Xs], Cum, Sliced) :-
+    % If X is not unifiable with Sep then appended X  to the current slot
     X \== Sep,
     append(Cum, [X], Cum1),
     slice(Sep, Xs, Cum1, Sliced).
@@ -146,10 +150,13 @@ unify_slots(Slots, Words) :-
 *    Best = Word, Word = [b, a, g] .
 */
 unify_slot([S|Ss], Words, Best, Word) :-
+    % Find the Best word from the minimum PermCount left
     slot_perms(S, Words, 0, PermCount),
     best_slot(Ss, S, Words, PermCount, Best),
     exclude(\=(Best), Words, Perm),
+    % Word should be a member of Perm
     member(Word, Perm),
+    % Unify Best with Word
     Best = Word.
 
 
@@ -165,6 +172,7 @@ unify_slot([S|Ss], Words, Best, Word) :-
 */
 slot_perms(_, [], Cum, Cum).
 slot_perms(Slot, [W| Ws], Cum, PermCount) :-
+    % Increment cummulative ONLY if Slot is unifiable with W
     (Slot \= W ->
         slot_perms(Slot, Ws, Cum  , PermCount);
         slot_perms(Slot, Ws, Cum+1, PermCount)
@@ -183,6 +191,8 @@ slot_perms(Slot, [W| Ws], Cum, PermCount) :-
 best_slot([], Best, _, _, Best).
 best_slot([S|Ss], CurrentBest, Words, PermCount, Best):-
    slot_perms(S, Words, 0, NewPermCount),
+   % If NewPermCount is less than PermCount then we have a
+   % permutation with less options, which is better.
    (NewPermCount < PermCount->
        best_slot(Ss, S,           Words, NewPermCount, Best);
        best_slot(Ss, CurrentBest, Words, PermCount,    Best)
