@@ -1,4 +1,3 @@
-
 /*  Code for Project 1, Semester 2, 2021
 *    Author:         Joshua Carpeggiani
 *    E-mail:         jcarpeggiani@student.unimelb.edu.au
@@ -6,13 +5,22 @@
 *    Purpose:        Code for Project 1, Semester 2, 2021. Fillin Puzzle (https://en.wikipedia.org/wiki/Fill-In_(puzzle)).
 *                    This code allows for a Puzzle specification and a WordList to be input,
 *                    and the Puzzle will be unified with a solution for that Puzzle.
+*
+* A Fillin Puzzle is similar to a crossword puzzle except that words are supplied instead of hints.
+* The goal of a fill in puzzle is to match words with slots, and overlap common letters if they occur.
+* This implementation takes a generic approach to 'Slot' creation and unification and most code could be refactored to be used in other applications.
+* puzzle_solution is the main predicate (see below) and some rules:
+* - The blocked out elements are indicated with '#' chars (usually illustrated by black squares)
+* - The minumum slot length is 2
+* Both of these options can be configured in `puzzle_solution`.
 */
 :- ensure_loaded(library(clpfd)).
 :- ensure_loaded(library(lists)).
 
 /*
 *    puzzle_solution(-Puzzle: List, +WordList: List):
-*    puzzle_solution/2 solves a Fill-in Puzzle.
+*    puzzle_solution/2 solves a Fill-in Puzzle,
+*    where Puzzle is a List of rows and WordList is a List of words in list format (eg 'bag; would be ['b', 'a', 'g']).
 *    Holds true if List1 is a valid puzzle (List of Lists) for WordList as defined here: https://en.wikipedia.org/wiki/Fill-In_(puzzle).
 *
 *    Examples:
@@ -163,7 +171,7 @@ slot_perms(Slot, [W| Ws], Cum, PermCount) :-
     ).
 
 /*
-*    best_slot(+Words: List, +Permutations: Number, +Slots: List, +CurrentBest: Number, -Best: List).
+*    best_slot(+Slots: List, +CurrentBest: Elem, +Words: List, +Permutations: Number, -Best: List).
 *    best_slot/5 selects the best Slot into Best from Slots given a list of Words.
 *    Holds true if Best is the Best selection of Words from Slots.
 *
