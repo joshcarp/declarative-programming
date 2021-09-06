@@ -2,6 +2,7 @@
 *    Author:         Joshua Carpeggiani
 *    E-mail:         jcarpeggiani@student.unimelb.edu.au
 *    Student ID:     999380
+*    Subject Code:   COMP30020
 *    Purpose:        Code for Project 1, Semester 2, 2021. Fillin Puzzle (https://en.wikipedia.org/wiki/Fill-In_(puzzle)).
 *                    This code allows for a Puzzle specification and a WordList to be input,
 *                    and the Puzzle will be unified with a solution for that Puzzle.
