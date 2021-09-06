@@ -115,6 +115,12 @@ slice(Sep, [X|Xs], Cum, Sliced) :-
 
 
 /* ----------------------------- Puzzle Solver Predicates -------------------------------- */
+/*
+* Puzzle Solver Predicates unify the slots with the words by finding the slots with the smallest
+* Number of matching words and unifying them first.
+* This way there are less numbers of permutations to unify for the rest of the slots.
+*/
+
 
 /*
 *    unify_slots(-Slots: List, +Words: List):
